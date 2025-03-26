@@ -1,29 +1,38 @@
 import express from "express";
-import { addHostel } from "../controllers/hostelController.js";
-import upload from "../middleware/multer.js";
-import auth from "../middleware/auth.js";
 
-const hostelRouter = express.Router();
+import { createhostel, gethostels, gethostelsbyid } from "../controllers/hostelController.js";
+import {upload} from "../middlewares/multer.js";
+// import auth from "../middleware/auth.js";
+// import router from "./userRouter.js";
 
-hostelRouter.post(
-  "/add-hostel",
+const router = express.Router();
 
-  upload.fields([
-    {
-      name: "banner_image",
-      maxCount: 1,
-    },
+// hostelRouter.post(
+//   "/add-hostel",
 
-    {
-      name: "room_images",
-      maxCount: 3,
-    },
-  ]),
-  addHostel
-);
+//   upload.fields([
+//     {
+//       name: "banner_image",
+//       maxCount: 1,
+//     },
+
+//     {
+//       name: "room_images",
+//       maxCount: 3,
+//     },
+//   ]),
+//   addHostel
+// );
 
 // hostelRouter.get("/list-hostels", getHostels);
 
 // hostelRouter.delete("/remove-hostel", removeHostel);
 
-export default hostelRouter;
+
+
+router.post("/addhostel", upload.fields([{ name: "hostel_image", maxCount: 1 }, { name: "room_imgs", maxCount: 5 }]), createhostel);
+router.get("/gethostels", gethostels)
+
+router.get("/gethostelbyid/:hostelID", gethostelsbyid )
+
+export default router;

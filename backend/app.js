@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import userRoutes from "./router/userRouter.js";
 import customerReviewRoutes from "./router/customerReviewRouter.js";
-import hostelRouter from "./router/hostelRouter.js";
+import hostelRoutes from "./router/hostelRouter.js";
 import adminRoutes from "./router/adminRouter.js";
 const app = express();
 app.use(express.json());
@@ -39,4 +39,4 @@ app.use("/api/admin", adminRoutes);
 
 app.use("/api/user", customerReviewRoutes);
 
-app.use("/api/", hostelRouter);
+app.use("/api", hostelRoutes);
