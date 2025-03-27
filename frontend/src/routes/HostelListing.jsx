@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import HostelSearchBar from "./HostelSearchBar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,37 @@ const HostelListing = () => {
   const [filteredPGs, setFilteredPGs] = useState(pgListings);
   const [isVerified, setIsVerified] = useState(false);
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
+  const [hostels, setHostels] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getHostels();
+  }, []);
+
+  const getHostels = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/getHostels");
+
+      if (response.ok) {
+        const data = await response.json();
+        const updatedData = data.data.map((eachHostel) => {
+          return {
+            id: eachHostel._id,
+            hostelName: eachHostel.hostel_name,
+            hostelImageUrl: eachHostel.hostel_image_url,
+            category: eachHostel.hostel_category,
+            address: eachHostel.hostel_address,
+            startingPrice: eachHostel.starting_price,
+          };
+        });
+        setHostels(updatedData);
+        setFilteredPGs(updatedData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleFilterChange = (type, ac) => {
     let filteredData = pgListings;
 
@@ -45,6 +75,8 @@ const HostelListing = () => {
     handleFilterChange("All", "All");
   };
 
+  if (hostels.length === 0) return <h1>Loading...</h1>;
+
   return (
     <div>
       <HostelSearchBar
@@ -63,36 +95,35 @@ const HostelListing = () => {
             >
               <img
                 loading="lazy"
-                src={pg.image}
-                alt={pg.name}
+                src={pg.hostelImageUrl}
+                alt={pg.hostelName}
                 className="w-full h-44 sm:h-52 object-cover transition-opacity duration-300 group-hover:opacity-90"
               />
               <div className="p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={`px-3 py-1 text-xs sm:text-sm font-medium rounded-md ${
-                      pg.type === "Girls"
+                      pg.category === "Girls"
                         ? "bg-pink-200 text-pink-700"
                         : "bg-blue-200 text-blue-700"
                     }`}
                   >
-                    {pg.type}
+                    {pg.category}
                   </span>
-                  {pg.verified && (
-                    <span className="px-3 py-1 text-xs sm:text-sm font-medium bg-green-200 text-green-700 rounded-md">
-                      PGO Verified
-                    </span>
-                  )}
                 </div>
                 <h3 className="mt-2 text-base sm:text-lg font-semibold text-gray-800 truncate">
-                  {pg.name}
+                  {pg.hostelName}
                 </h3>
-                <p className="text-sm text-gray-600">{pg.location}</p>
-                <p className="mt-1 text-xs sm:text-sm text-gray-700 font-medium">
-                  {pg.distance}
+                <p className="text-sm text-gray-600">{pg.address?.street}</p>
+
+                <p className="mt-2 text-sm">
+                  starts at
+                  <span className="ml-2 text-base sm:text-lg font-semibold text-gray-900">
+                    ₹{pg.startingPrice}/-
+                  </span>
                 </p>
-                <p className="mt-2 text-base sm:text-lg font-semibold text-gray-900">
-                  {pg.price}
+                <p>
+                  ratings <span className="font-bold">3</span>
                 </p>
                 <div className="mt-4">
                   <button

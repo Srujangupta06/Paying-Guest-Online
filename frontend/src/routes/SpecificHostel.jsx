@@ -7,12 +7,15 @@ import { amentiesList, roomTypesList } from "../utils/utils";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserFeedBackCard from "../components/UserFeedBackCard";
 import HostelReviewCard from "../components/HostelReviewCard";
+import { useParams } from "react-router-dom";
 const SpecificHostel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState(false);
+  const [hostelInfo, setHostelInfo] = useState("");
+  const { id } = useParams();
   const hostelRoomSliderSettings = {
     dots: false,
     fade: true,
@@ -50,9 +53,42 @@ const SpecificHostel = () => {
     arrows: false,
     pauseOnHover: false,
   };
+  useEffect(() => {
+    getHostelInfo();
+  }, []);
 
-  const onHandleChatNow = () => {
-    const mobileNumber = "9381138831";
+  const getHostelInfo = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/hostel/${id}`);
+      if (response.ok) {
+        const { hostel_info } = await response.json();
+        const updatedHostelInfo = {
+          id: hostel_info._id,
+          hostelName: hostel_info.hostel_name,
+          hostelImageUrl: hostel_info.hostel_image_url,
+          category: hostel_info.hostel_category,
+          address: hostel_info.hostel_address,
+          roomInfo: hostel_info.room_details.map((eachRoom) => {
+            return {
+              id: eachRoom._id,
+              roomType: eachRoom.room_type,
+              roomPrice: eachRoom.room_rent,
+              vacancies: eachRoom.vacancies,
+              roomImages: eachRoom.room_imgs,
+            };
+          }),
+          amenties: hostel_info.amenities,
+          ownerName: hostel_info.owner_name,
+          contactNo: hostel_info.contact_no,
+        };
+        setHostelInfo(updatedHostelInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onHandleChatNow = (mobileNumber) => {
     const prefilledMessage =
       "Hi, I am interested in your PG. Please provide more details.";
     const whatsappUrl = `https://wa.me/${mobileNumber}?text=${encodeURIComponent(
@@ -60,6 +96,19 @@ const SpecificHostel = () => {
     )}`;
     window.open(whatsappUrl, "_blank");
   };
+  if (hostelInfo === "") {
+    return <h1>Loading..</h1>;
+  }
+  const {
+    hostelName,
+    address,
+    ownerName,
+    category,
+    contactNo,
+    hostelImageUrl,
+    roomInfo,
+  } = hostelInfo;
+  const { street, city, state } = address;
   return (
     <main className="px-6 sm:px-10 md:px-32 py-8 min-h-screen bg-gray-100">
       <section className="bg-white rounded-md px-4 py-8 mb-8">
@@ -67,12 +116,10 @@ const SpecificHostel = () => {
         <div className="flex flex-col md:flex-row justify-between gap-y-8">
           <div className="w-full md:w-1/2 flex flex-col justify-between">
             <div>
-              <h1 className="font-semibold text-2xl mb-2">
-                NINETHA NEST PG FOR WOMEN'S
-              </h1>
+              <h1 className="font-semibold text-2xl mb-2">{hostelName}</h1>
               <div className="flex items-center gap-x-0.5 mb-6">
                 <MdLocationPin className="text-red-700" />
-                <p className="text-gray-600 italic text-sm">Location</p>
+                <p className="text-gray-600 italic text-sm">{street}</p>
               </div>
               <div className="flex items-center gap-x-1 mb-3">
                 <FaStar className="text-yellow-400" />
@@ -83,35 +130,35 @@ const SpecificHostel = () => {
               <div className="flex items-center gap-x-1 mb-3">
                 🤵
                 <p className="font-semibold text-gray-800 text-sm">
-                  Owner Name
+                  {ownerName}
                 </p>
               </div>
               <div className="flex items-center gap-x-1 mb-3">
                 <FaPhoneAlt className="text-sm text-blue-400" />
                 <p className="font-semibold text-gray-800 text-sm">
-                  +91xxxxxxxxxx
+                  {contactNo}
                 </p>
               </div>
               <div className="flex items-center gap-x-1 mb-3">
-                🙍‍♀️
+                {category === "Boys" ? "🙍" : "🙍‍♀️"}
                 <p className="font-semibold text-red-600 text-md">
-                  Only for Women
+                  Only for {category}
                 </p>
               </div>
             </div>
             <button
               className="self-start bg-gray-800 text-white px-5 py-1.5  border border-gray-800 cursor-pointer rounded-sm flex items-center gap-x-2 text-sm"
-              onClick={onHandleChatNow}
+              onClick={() => onHandleChatNow(contactNo)}
             >
-              <IoLogoWhatsapp className="text-lg"/>
+              <IoLogoWhatsapp className="text-lg" />
               Chat now
             </button>
           </div>
           {/*Right Side Section */}
           <div className="w-full md:w-1/2">
             <img
-              src="https://d2bxpw04qb5rhq.cloudfront.net/production/property_image/image/146775/8766f2fa21940512d660938945332bc42b626ea696bd496ec5af6e8ee32ada5203ab9d5ae7523f43/IMG_20230903_214056.jpg"
-              alt="hostel main image"
+              src={hostelImageUrl}
+              alt={hostelName}
               className="w-full h-auto rounded-sm shadow-lg"
             />
           </div>
@@ -144,10 +191,10 @@ const SpecificHostel = () => {
           </div>
         </div>
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-          {roomTypesList.map((eachRoomInfo) => (
+          {roomInfo.map((eachRoomInfo) => (
             <li key={eachRoomInfo.id} className="rounded-md shadow-md p-4">
               <Slider {...hostelRoomSliderSettings}>
-                {eachRoomInfo.imageUrlList.map((eachImage, index) => (
+                {eachRoomInfo.roomImages.map((eachImage, index) => (
                   <img
                     src={eachImage}
                     key={index}
@@ -160,22 +207,22 @@ const SpecificHostel = () => {
                 <div className="flex items-center justify-between">
                   <h3
                     className={`font-semibold text-sm mb-2 ${
-                      eachRoomInfo.roomStatus === "Available"
+                      eachRoomInfo.vacancies > 0 
                         ? "text-green-500"
                         : "text-red-700"
                     }`}
                   >
-                    {eachRoomInfo.roomStatus}
+                    {eachRoomInfo.vacancies > 0 ? "Available" : "Booked"}
                   </h3>
                   <h3 className="font-semibold text-lg">
-                    ₹{eachRoomInfo.pricePerMonth}/-
+                    ₹{eachRoomInfo.roomPrice}/-
                   </h3>
                 </div>
-                <p className="text-gray-600 mb-2">{eachRoomInfo.roomType}</p>
+                <p className="text-gray-600 mb-2">{eachRoomInfo.roomType} Sharing</p>
                 <button
                   disabled={eachRoomInfo.roomStatus !== "Available"}
                   className={`text-xs px-4 py-1.5 rounded-sm ${
-                    eachRoomInfo.roomStatus === "Available"
+                    eachRoomInfo.vacancies > 0 
                       ? "bg-black text-white cursor-pointer"
                       : "bg-gray-300 text-gray-600 cursor-not-allowed"
                   }`}
@@ -208,8 +255,12 @@ const SpecificHostel = () => {
               <HostelReviewCard />
             </Slider>
           </div>
-          <h3 className="font-semibold text-md mt-4 italic text-gray-600 mb-4">Be the First One to Review</h3>
-          <button className="bg-gray-600 px-4 py-1.5 text-xs text-white rounded-sm cursor-pointer">Review</button>
+          <h3 className="font-semibold text-md mt-4 italic text-gray-600 mb-4">
+            Be the First One to Review
+          </h3>
+          <button className="bg-gray-600 px-4 py-1.5 text-xs text-white rounded-sm cursor-pointer">
+            Review
+          </button>
         </div>
       </section>
     </main>

@@ -30,9 +30,9 @@ const router = express.Router();
 
 
 
-router.post("/addhostel", upload.fields([{ name: "hostel_image", maxCount: 1 }, { name: "room_imgs", maxCount: 5 }]), createhostel);
+router.post("/add-hostel", upload.fields([{ name: "hostel_image", maxCount: 1 }, { name: "room_imgs", maxCount: 5 }]), createhostel);
 router.get("/gethostels", gethostels)
 
-router.get("/gethostelbyid/:hostelID", gethostelsbyid )
+router.get("/hostel/:hostelId", gethostelsbyid )
 
 export default router;

@@ -16,27 +16,35 @@ const uploadToCloudinary = async (filePath) => {
 // Create a new hostel with image upload
 export const createhostel = async (req, res) => {
   try {
-    const { hostel_name, hostel_category, hostel_address, room_details, amenities, owner_name, contact_no } = req.body;
+    const {
+      hostel_name,
+      hostel_category,
+      hostel_address,
+      room_details,
+      amenities,
+      owner_name,
+      contact_no,
+    } = req.body;
 
     // Handle uploaded images
 
-    const hostel_imageurl = req.files["hostel_image"]
+    const hostel_image_url = req.files["hostel_image"]
       ? await uploadToCloudinary(req.files["hostel_image"][0].path)
       : "";
 
-
-
     const room_imgs = req.files["room_imgs"]
-      ? await Promise.all(req.files["room_imgs"].map(file => uploadToCloudinary(file.path)))
+      ? await Promise.all(
+          req.files["room_imgs"].map((file) => uploadToCloudinary(file.path))
+        )
       : [];
-    // console.log(req.files["hostel_image"])
+
     const newHostel = new hostel({
       hostel_name,
       hostel_category,
       hostel_address: JSON.parse(hostel_address),
       room_details: JSON.parse(room_details).map((room, index) => ({
         ...room,
-        room_imgs: room_imgs[index] || "" // Store uploaded Cloudinary URLs
+        room_imgs: room_imgs[index] || "",
       })),
       amenities: JSON.parse(amenities),
       owner_name,
@@ -44,43 +52,57 @@ export const createhostel = async (req, res) => {
       hostel_imageurl,
     });
 
-    const savedHostel = await newHostel.save();
-    res.status(200).json(savedHostel);
+    await newHostel.save();
+    res.status(201).json({
+      message: "Hostel Added Successfully",
+    });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message });
+    console.log(error);
+    res.json({ error: error.message });
   }
 };
 
-
-
 export const gethostels = async (req, res) => {
-
   try {
-    const hostels = await hostel.find()
-    res.json({ data: hostels })
-  }
+    const hostels = await hostel.find({});
+    const newResponse = hostels.map((eachHostel) => {
+      const {
+        _id,
+        hostel_name,
+        hostel_category,
+        hostel_address,
+        room_details,
+        hostel_image_url,
+      } = eachHostel;
+      return {
+        _id,
+        hostel_name,
+        hostel_category,
+        hostel_address,
+        hostel_image_url,
+        starting_price: room_details[0].room_rent, // filter smaller price and send as min-price
+      };
+    });
 
-  catch (err) {
-    res.status(500).json({ message: "server error", err })
+    res.status(200).json({ data: newResponse });
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server error", err });
   }
-}
-
+};
 
 export const gethostelsbyid = async (req, res) => {
   try {
-    const id = req.params.hostelID
+    const id = req.params.hostelId;
     //   console.log(id)
-    const hostels = await hostel.find({ _id: id }).lean();
+    const hostel_info = await hostel.findById(id);
     // console.log(typeof (hostels))
 
-    hostels.forEach(hostel => {
-      hostel.rating = 3.5
-    });
+    // hostels.forEach((hostel) => {
+    //   hostel.rating = 3.5;
+    // });
 
-    res.json({ hostels })
+    res.json({ hostel_info });
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error", err });
   }
-  catch (err) {
-    res.status(500).json({ message: "server error", err })
-  }
-}
+};
