@@ -39,7 +39,7 @@ export const createhostel = async (req, res) => {
       : [];
 
     const newHostel = new hostel({
-      hostel_name,
+      hostel_name:hostel_name.trim(),
       hostel_category,
       hostel_address: JSON.parse(hostel_address),
       room_details: JSON.parse(room_details).map((room, index) => ({
@@ -47,9 +47,9 @@ export const createhostel = async (req, res) => {
         room_imgs: room_imgs[index] || "",
       })),
       amenities: JSON.parse(amenities),
-      owner_name,
+      owner_name:owner_name.trim(),
       contact_no,
-      hostel_imageurl,
+      hostel_image_url,
     });
 
     await newHostel.save();
@@ -95,11 +95,10 @@ export const gethostelsbyid = async (req, res) => {
     const id = req.params.hostelId;
     //   console.log(id)
     const hostel_info = await hostel.findById(id);
-    // console.log(typeof (hostels))
 
-    // hostels.forEach((hostel) => {
-    //   hostel.rating = 3.5;
-    // });
+    if (!hostel_info) {
+      return res.status(404).json({ message: "Hostel not found" });
+    }
 
     res.json({ hostel_info });
   } catch (err) {

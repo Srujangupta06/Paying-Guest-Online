@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { backendUrl } from "../utils/utils";
 const UserRegistration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState("");
@@ -27,7 +28,7 @@ const UserRegistration = () => {
 
   const userRegistration = async () => {
     try {
-      const apiUrl = "http://localhost:5000/api/user/registration";
+      const apiUrl = backendUrl + "/api/user/registration";
       const newUser = {
         name: userName,
         password: userPassword,
@@ -52,13 +53,13 @@ const UserRegistration = () => {
         toast.success("Registration Successful", {
           pauseOnHover: false,
           autoClose: 3000,
-          position:'bottom-center'
+          position: "bottom-center",
         });
         navigate("/");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Registration Failed" ,{
+      toast.error("Registration Failed", {
         pauseOnHover: false,
         autoClose: 5000,
       });

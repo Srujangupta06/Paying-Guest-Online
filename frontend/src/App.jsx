@@ -20,6 +20,7 @@ const SpecificHostel = lazy(() => import("./routes/SpecificHostel"));
 const AdminLogin = lazy(() => import("../../admin-dash/src/routes/AdminLogin"));
 const HostelListing = lazy(() => import("./routes/HostelListing"));
 const UserRegistration = lazy(() => import("./routes/UserRegistration"));
+
 function App() {
   return (
     <>

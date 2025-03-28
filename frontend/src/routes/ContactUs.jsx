@@ -41,21 +41,16 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center min-h-screen bg-gray-100 p-6 gap-8">
-      {/* Left side: Image */}
-      <div className="md:w-1/2 w-full h-full flex justify-center">
-        <img
-          src="https://cdn.dribbble.com/userupload/12821765/file/original-bcb0bb2a26e1af8d4fac4fc7225a94d0.png?resize=1504x1128&vertical=center" // Change this path to your actual image
-          alt="Contact Us"
-          className="w-full h-auto object-cover rounded-lg shadow-lg"
-        />
-      </div>
-
-      {/* Right side: Contact Form */}
-      <div className="md:w-1/2 w-full h-full p-8 bg-white rounded-lg shadow-lg">
-        <h1 className="text-3xl font-semibold text-center">Contact Us</h1>
+    <div className="flex flex-col md:flex-row md:justify-between items-center justify-center min-h-screen md:min-h-[90vh] bg-gray-100 px-6 md:px-32 gap-y-8">
+      
+      {/* Left side: Contact Form */}
+      <div className="md:w-[40%] w-full">
+        <h1 className="text-2xl font-semibold my-3">Get In Touch</h1>
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3  p-8 bg-white rounded-lg shadow-lg"
+        >
           <div className="flex flex-col">
             <label htmlFor="name" className="font-medium">
               Full Name
@@ -66,7 +61,7 @@ const ContactUs = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="border-2 border-gray-300 p-2 rounded-lg"
+              className="border-2 border-gray-300 px-2 py-1 mt-1 rounded-lg"
               placeholder="Enter your full name"
               required
             />
@@ -82,7 +77,7 @@ const ContactUs = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="border-2 border-gray-300 p-2 rounded-lg"
+              className="border-2 border-gray-300 px-2 py-1 mt-1 rounded-lg"
               placeholder="Enter your email"
               required
             />
@@ -97,21 +92,31 @@ const ContactUs = () => {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              className="border-2 border-gray-300 p-2 rounded-lg"
+              className="border-2 border-gray-300 px-2 py-1 mt-1 rounded-lg"
               placeholder="Enter your message"
-              rows="4"
+              rows="3"
               required
             ></textarea>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-green-500 text-white p-3 rounded-lg mt-4 hover:bg-green-600"
+            className="w-full bg-green-500 text-white px-4 py-2 rounded-lg mt-2 hover:bg-green-600"
           >
             Send Message
           </button>
         </form>
       </div>
+      {/* Right side: Image */}
+      <div className="md:w-[40%] w-full md:flex md:justify-center hidden">
+        <img
+          src="https://res.cloudinary.com/djv3sgbxn/image/upload/v1741198791/Contact_us-amico_gkl93k.png" 
+          alt="Contact Us"
+          className="w-full h-auto object-cover"
+        />
+      </div>
+
+      
     </div>
   );
 };

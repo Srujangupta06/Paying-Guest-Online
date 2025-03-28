@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { backendUrl } from "../utils/utils";
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [userEmail, setUserEmail] = useState("");
@@ -20,7 +21,7 @@ const UserLogin = () => {
 
   const getUserLogin = async () => {
     try {
-      const apiUrl = "http://localhost:5000/api/user/login";
+      const apiUrl = backendUrl + "/api/user/login";
       const userCredentials = {
         email: userEmail,
         password: userPassword,

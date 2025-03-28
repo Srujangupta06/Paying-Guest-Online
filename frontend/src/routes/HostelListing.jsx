@@ -3,6 +3,7 @@ import HostelSearchBar from "./HostelSearchBar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { pgListings } from "../utils/utils";
+import Loader from "../components/Loader";
 const HostelListing = () => {
   const [filteredPGs, setFilteredPGs] = useState(pgListings);
   const [isVerified, setIsVerified] = useState(false);
@@ -75,7 +76,7 @@ const HostelListing = () => {
     handleFilterChange("All", "All");
   };
 
-  if (hostels.length === 0) return <h1>Loading...</h1>;
+  if (hostels.length === 0) return <Loader />;
 
   return (
     <div>
@@ -86,7 +87,7 @@ const HostelListing = () => {
         onPriceRangeChange={handlePriceRangeChange}
         isVerified={isVerified}
       />
-      <div className="p-4 sm:p-6 md:p-8 bg-gray-50">
+      <div className="p-4 sm:p-6 md:p-8 bg-gray-50 min-h-screen md:min-h-[95vh]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredPGs.map((pg) => (
             <div

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import UserFeedBackCard from "../components/UserFeedBackCard";
 import HostelReviewCard from "../components/HostelReviewCard";
 import { useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 const SpecificHostel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState(false);
@@ -97,7 +98,7 @@ const SpecificHostel = () => {
     window.open(whatsappUrl, "_blank");
   };
   if (hostelInfo === "") {
-    return <h1>Loading..</h1>;
+    return <Loader />;
   }
   const {
     hostelName,
@@ -110,7 +111,7 @@ const SpecificHostel = () => {
   } = hostelInfo;
   const { street, city, state } = address;
   return (
-    <main className="px-6 sm:px-10 md:px-32 py-8 min-h-screen bg-gray-100">
+    <main className="px-6 sm:px-10 md:px-32 py-8 min-h-screen md:min-h-[95vh] bg-gray-100">
       <section className="bg-white rounded-md px-4 py-8 mb-8">
         {/*Left Side Section */}
         <div className="flex flex-col md:flex-row justify-between gap-y-8">
@@ -207,7 +208,7 @@ const SpecificHostel = () => {
                 <div className="flex items-center justify-between">
                   <h3
                     className={`font-semibold text-sm mb-2 ${
-                      eachRoomInfo.vacancies > 0 
+                      eachRoomInfo.vacancies > 0
                         ? "text-green-500"
                         : "text-red-700"
                     }`}
@@ -218,11 +219,13 @@ const SpecificHostel = () => {
                     ₹{eachRoomInfo.roomPrice}/-
                   </h3>
                 </div>
-                <p className="text-gray-600 mb-2">{eachRoomInfo.roomType} Sharing</p>
+                <p className="text-gray-600 mb-2">
+                  {eachRoomInfo.roomType} Sharing
+                </p>
                 <button
                   disabled={eachRoomInfo.roomStatus !== "Available"}
                   className={`text-xs px-4 py-1.5 rounded-sm ${
-                    eachRoomInfo.vacancies > 0 
+                    eachRoomInfo.vacancies > 0
                       ? "bg-black text-white cursor-pointer"
                       : "bg-gray-300 text-gray-600 cursor-not-allowed"
                   }`}

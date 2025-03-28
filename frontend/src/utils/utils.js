@@ -147,7 +147,6 @@ export const roomTypesList = [
   },
 ];
 
-
 export const pgListings = [
   {
     id: 1,
@@ -340,3 +339,5 @@ export const pgListings = [
     image: "/fifth.jpg",
   },
 ];
+
+export const backendUrl = "http://localhost:5000";
