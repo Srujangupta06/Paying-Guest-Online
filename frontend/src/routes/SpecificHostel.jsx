@@ -1,7 +1,7 @@
 import { MdLocationPin } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
-import { IoLogoWhatsapp } from "react-icons/io";
+import { IoLogoWhatsapp, IoIosArrowRoundBack } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { amentiesList, roomTypesList } from "../utils/utils";
 import Slider from "react-slick";
@@ -10,7 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
 import UserFeedBackCard from "../components/UserFeedBackCard";
 import HostelReviewCard from "../components/HostelReviewCard";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 const SpecificHostel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,6 +112,14 @@ const SpecificHostel = () => {
   const { street, city, state } = address;
   return (
     <main className="px-6 sm:px-10 md:px-32 py-8 min-h-screen md:min-h-[95vh] bg-gray-100">
+      <Link
+        to="/hostel-listings"
+        className="items-center gap-x-1.5 my-4 inline-flex"
+      >
+        <IoIosArrowRoundBack className="text-xl" />
+        <span className="text-sm">Back</span>
+      </Link>
+
       <section className="bg-white rounded-md px-4 py-8 mb-8">
         {/*Left Side Section */}
         <div className="flex flex-col md:flex-row justify-between gap-y-8">
@@ -122,7 +130,7 @@ const SpecificHostel = () => {
                 <MdLocationPin className="text-red-700" />
                 <p className="text-gray-600 italic text-sm">{street}</p>
               </div>
-              <div className="flex items-center gap-x-1 mb-3">
+              <div className="flex items-center gap-x-2 mb-3">
                 <FaStar className="text-yellow-400" />
                 <p className="text-gray-600 font-semibold text-md">
                   4.3 ratings
@@ -130,11 +138,11 @@ const SpecificHostel = () => {
               </div>
               <div className="flex items-center gap-x-1 mb-3">
                 🤵
-                <p className="font-semibold text-gray-800 text-sm">
+                <p className="font-semibold text-gray-800 text-md">
                   {ownerName}
                 </p>
               </div>
-              <div className="flex items-center gap-x-1 mb-3">
+              <div className="flex items-center gap-x-2 mb-3">
                 <FaPhoneAlt className="text-sm text-blue-400" />
                 <p className="font-semibold text-gray-800 text-sm">
                   {contactNo}
@@ -193,7 +201,10 @@ const SpecificHostel = () => {
         </div>
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {roomInfo.map((eachRoomInfo) => (
-            <li key={eachRoomInfo.id} className="rounded-md shadow-md p-4">
+            <li
+              key={eachRoomInfo.id}
+              className="rounded-md shadow-md p-4 relative"
+            >
               <Slider {...hostelRoomSliderSettings}>
                 {eachRoomInfo.roomImages.map((eachImage, index) => (
                   <img
@@ -207,7 +218,7 @@ const SpecificHostel = () => {
               <div className="mt-4">
                 <div className="flex items-center justify-between">
                   <h3
-                    className={`font-semibold text-sm mb-2 ${
+                    className={`font-semibold text-md mb-2 ${
                       eachRoomInfo.vacancies > 0
                         ? "text-green-500"
                         : "text-red-700"
@@ -219,9 +230,18 @@ const SpecificHostel = () => {
                     ₹{eachRoomInfo.roomPrice}/-
                   </h3>
                 </div>
-                <p className="text-gray-600 mb-2">
-                  {eachRoomInfo.roomType} Sharing
-                </p>
+                <div>
+                  <p className="text-gray-600 mb-2">
+                    {eachRoomInfo.roomType} Sharing
+                  </p>
+                  {!eachRoomInfo.vacancies <= 0 && (
+                    <div className="bg-red-400 text-white px-2 py-1.5 rounded-sm shadow-md inline-block absolute bottom-[90%] right-[5%]">
+                      <p className="text-[14px] font-semibold text-white">
+                        Only {eachRoomInfo.vacancies} Left
+                      </p>
+                    </div>
+                  )}
+                </div>
                 <button
                   disabled={eachRoomInfo.roomStatus !== "Available"}
                   className={`text-xs px-4 py-1.5 rounded-sm ${
